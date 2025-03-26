@@ -1,8 +1,8 @@
-import axiosInstance from './axios'
+import client from './axios'
 import AxiosMockAdapter from 'axios-mock-adapter'
 
-const instanceMockAxios = new AxiosMockAdapter(axiosInstance, {
+const mockClient = new AxiosMockAdapter(client, {
     delayResponse: 0,
 })
 
-export default instanceMockAxios
+export default mockClient
