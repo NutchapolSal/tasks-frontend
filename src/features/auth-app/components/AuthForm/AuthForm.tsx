@@ -40,11 +40,8 @@ const AuthForm: FC<AuthFormProps> = ({ outputHandler }) => {
             if (isAxiosError(error) && error.status === 401) {
                 setAuthError('Session has expired, Please log in again')
                 outputHandler(null)
-            } else if (
-                error instanceof Error &&
-                error.message === 'Invalid JWT payload'
-            ) {
-                setAuthError('Invalid JWT payload')
+            } else if (error instanceof Error || isAxiosError(error)) {
+                setAuthError(error.message)
                 outputHandler(null)
             } else {
                 throw error
@@ -126,11 +123,9 @@ const AuthForm: FC<AuthFormProps> = ({ outputHandler }) => {
                 } catch (error) {
                     if (isAxiosError(error) && error.status === 401) {
                         setAuthError('Invalid email or password')
-                    } else if (
-                        error instanceof Error &&
-                        error.message === 'Invalid JWT payload'
-                    ) {
-                        setAuthError('Invalid JWT payload')
+                        outputHandler(null)
+                    } else if (error instanceof Error || isAxiosError(error)) {
+                        setAuthError(error.message)
                         outputHandler(null)
                     } else {
                         throw error
