@@ -1,13 +1,13 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 
-import Form from './Form'
+import TasksMain from './TasksMain'
 
-describe('Form', () => {
+describe('TasksMain', () => {
     const handleOutput = vi.fn()
 
     it('should load and display', () => {
-        render(<Form outputHandler={handleOutput} />)
+        render(<TasksMain outputHandler={handleOutput} />)
 
         const button = screen.getByRole('button', { name: 'calculate button' })
         const inputs = screen.getAllByRole('textbox')
@@ -21,7 +21,7 @@ describe('Form', () => {
     })
 
     it('should run callback on submit', () => {
-        render(<Form outputHandler={handleOutput} />)
+        render(<TasksMain outputHandler={handleOutput} />)
 
         const button = screen.getByRole('button', { name: 'calculate button' })
         button.click()
@@ -30,7 +30,7 @@ describe('Form', () => {
     })
 
     it('should be able to input number and select operator', () => {
-        render(<Form outputHandler={handleOutput} />)
+        render(<TasksMain outputHandler={handleOutput} />)
 
         const input1 = screen.getByRole<HTMLInputElement>('textbox', {
             name: 'input1',
@@ -54,7 +54,7 @@ describe('Form', () => {
     })
 
     it('should run callback with correct values', () => {
-        render(<Form outputHandler={handleOutput} />)
+        render(<TasksMain outputHandler={handleOutput} />)
 
         const button = screen.getByRole('button', { name: 'calculate button' })
         const input1 = screen.getByRole<HTMLInputElement>('textbox', {

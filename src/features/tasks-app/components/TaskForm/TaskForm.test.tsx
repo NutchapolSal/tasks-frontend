@@ -1,18 +1,18 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 
-import Form from './Form'
+import TaskForm from './TaskForm'
 import { act } from 'react'
 
 async function sleep(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-describe('Form', () => {
+describe('TaskForm', () => {
     const handleOutput = vi.fn()
 
     it('should load and display', () => {
-        render(<Form outputHandler={handleOutput} />)
+        render(<TaskForm outputHandler={handleOutput} />)
 
         const button = screen.getByRole('button', { name: 'calculate button' })
         const inputs = screen.getAllByRole('textbox')
@@ -26,7 +26,7 @@ describe('Form', () => {
     })
 
     it('should run callback on submit', async () => {
-        render(<Form outputHandler={handleOutput} />)
+        render(<TaskForm outputHandler={handleOutput} />)
 
         const button = screen.getByRole('button', { name: 'calculate button' })
         const input1 = screen.getByRole<HTMLInputElement>('textbox', {
@@ -43,7 +43,7 @@ describe('Form', () => {
     })
 
     it('should be able to input number and select operator', () => {
-        render(<Form outputHandler={handleOutput} />)
+        render(<TaskForm outputHandler={handleOutput} />)
 
         const input1 = screen.getByRole<HTMLInputElement>('textbox', {
             name: 'count',
@@ -67,7 +67,7 @@ describe('Form', () => {
     })
 
     it('should run callback with correct values', async () => {
-        render(<Form outputHandler={handleOutput} />)
+        render(<TaskForm outputHandler={handleOutput} />)
 
         const button = screen.getByRole('button', { name: 'calculate button' })
         const input1 = screen.getByRole<HTMLInputElement>('textbox', {
@@ -106,7 +106,7 @@ describe('Form', () => {
     })
 
     it('should disable button when invalid', async () => {
-        render(<Form outputHandler={handleOutput} />)
+        render(<TaskForm outputHandler={handleOutput} />)
 
         const button = screen.getByRole<HTMLButtonElement>('button', {
             name: 'calculate button',
@@ -127,7 +127,7 @@ describe('Form', () => {
     })
 
     it('should error when input is empty', async () => {
-        render(<Form outputHandler={handleOutput} />)
+        render(<TaskForm outputHandler={handleOutput} />)
 
         const input1 = screen.getByRole<HTMLInputElement>('textbox', {
             name: 'count',

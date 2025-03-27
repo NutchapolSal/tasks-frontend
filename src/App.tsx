@@ -7,6 +7,7 @@ import {
     AuthContextValue,
     isMyJwtPayload,
 } from './features/auth-app/components/AuthContext'
+import TasksMain from './features/tasks-app/components/TasksMain/TasksMain'
 
 function App() {
     const [authContext, setAuthContext] = useState<AuthContextValue | null>(
@@ -38,6 +39,7 @@ function App() {
             <div className="card">
                 <AuthContext.Provider value={authContext}>
                     <AuthForm outputHandler={setAuthContext} />
+                    <TasksMain />
                 </AuthContext.Provider>
             </div>
         </>
