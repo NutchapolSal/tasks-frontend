@@ -15,9 +15,16 @@ declare namespace Components {
             email: string; // email
             rawPassword: string;
         }
+        export interface ChangePasswordDto {
+            rawOldPassword: string;
+            rawNewPassword: string;
+        }
         export interface CreateTaskDto {
-            title: string;
+            /**
+             * Description of the task, can be empty
+             */
             description: string;
+            title: string;
             status: "pending" | "in_progress" | "completed";
         }
         export interface Task {
@@ -28,13 +35,29 @@ declare namespace Components {
             userId: string;
         }
         export interface UpdateTaskDto {
-            title?: string;
+            /**
+             * Description of the task, can be empty
+             */
             description?: string;
+            title?: string;
             status?: "pending" | "in_progress" | "completed";
         }
     }
 }
 declare namespace Paths {
+    namespace AuthControllerChangePassword {
+        export type RequestBody = Components.Schemas.ChangePasswordDto;
+        namespace Responses {
+            export interface $204 {
+            }
+        }
+    }
+    namespace AuthControllerClearAllSessions {
+        namespace Responses {
+            export interface $204 {
+            }
+        }
+    }
     namespace AuthControllerDeleteUser {
         namespace Responses {
             export interface $204 {
@@ -163,6 +186,14 @@ export interface OperationMethods {
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.AuthControllerSignIn.Responses.$200>
   /**
+   * AuthController_clearAllSessions
+   */
+  'AuthController_clearAllSessions'(
+    parameters?: Parameters<UnknownParamsObject> | null,
+    data?: any,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<Paths.AuthControllerClearAllSessions.Responses.$204>
+  /**
    * AuthController_signUp
    */
   'AuthController_signUp'(
@@ -170,6 +201,14 @@ export interface OperationMethods {
     data?: Paths.AuthControllerSignUp.RequestBody,
     config?: AxiosRequestConfig  
   ): OperationResponse<Paths.AuthControllerSignUp.Responses.$200>
+  /**
+   * AuthController_changePassword
+   */
+  'AuthController_changePassword'(
+    parameters?: Parameters<UnknownParamsObject> | null,
+    data?: Paths.AuthControllerChangePassword.RequestBody,
+    config?: AxiosRequestConfig  
+  ): OperationResponse<Paths.AuthControllerChangePassword.Responses.$204>
   /**
    * AuthController_deleteUser
    */
@@ -242,6 +281,14 @@ export interface PathsDictionary {
       data?: any,
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.AuthControllerGetNewAccessToken.Responses.$200>
+    /**
+     * AuthController_clearAllSessions
+     */
+    'delete'(
+      parameters?: Parameters<UnknownParamsObject> | null,
+      data?: any,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.AuthControllerClearAllSessions.Responses.$204>
   }
   ['/auth/user']: {
     /**
@@ -260,6 +307,14 @@ export interface PathsDictionary {
       data?: any,
       config?: AxiosRequestConfig  
     ): OperationResponse<Paths.AuthControllerDeleteUser.Responses.$204>
+    /**
+     * AuthController_changePassword
+     */
+    'patch'(
+      parameters?: Parameters<UnknownParamsObject> | null,
+      data?: Paths.AuthControllerChangePassword.RequestBody,
+      config?: AxiosRequestConfig  
+    ): OperationResponse<Paths.AuthControllerChangePassword.Responses.$204>
   }
 }
 
@@ -267,6 +322,7 @@ export type Client = OpenAPIClient<OperationMethods, PathsDictionary>
 
 export type AccessTokenDto = Components.Schemas.AccessTokenDto;
 export type AuthDto = Components.Schemas.AuthDto;
+export type ChangePasswordDto = Components.Schemas.ChangePasswordDto;
 export type CreateTaskDto = Components.Schemas.CreateTaskDto;
 export type Task = Components.Schemas.Task;
 export type UpdateTaskDto = Components.Schemas.UpdateTaskDto;
