@@ -4,6 +4,7 @@ import * as yup from 'yup'
 import { CreateTaskDto, Task } from '../../../../types/backend-openapi'
 import { AuthContext } from '../../../auth-app/components/AuthContext'
 import client from '../../../../utils/axios'
+import { getTaskEmoji } from '../../common'
 
 export interface TaskProps {
     task?: Task | null
@@ -60,56 +61,66 @@ const TaskForm: FC<TaskProps> = ({ task, handleSubmit, children }) => {
         >
             {({ isSubmitting }) => (
                 <Form className="taskForm">
-                    <label>
-                        Title
-                        <Field
-                            type="title"
-                            name="title"
-                            disabled={isSubmitting}
-                            required
-                        />
-                    </label>
-                    <label>
-                        Description
-                        <Field
-                            type="description"
-                            name="description"
-                            disabled={isSubmitting}
-                        />
-                    </label>
-                    <label>
-                        <Field
-                            type="radio"
-                            name="status"
-                            value="pending"
-                            disabled={isSubmitting}
-                        />
-                        Pending
-                    </label>
-                    <label>
-                        <Field
-                            type="radio"
-                            name="status"
-                            value="in_progress"
-                            disabled={isSubmitting}
-                        />
-                        In Progress
-                    </label>
-                    <label>
-                        <Field
-                            type="radio"
-                            name="status"
-                            value="completed"
-                            disabled={isSubmitting}
-                        />
-                        Completed
-                    </label>
-                    <button type="submit" disabled={isSubmitting}>
-                        {task == null ? 'Add' : 'Save'}
-                    </button>
-                    {children}
-                    <ErrorMessage name="title" component="div" />
-                    <ErrorMessage name="description" component="div" />
+                    <div className="title">
+                        <label>
+                            Title
+                            <Field
+                                type="text"
+                                name="title"
+                                disabled={isSubmitting}
+                                required
+                            />
+                        </label>
+                    </div>
+                    <div className="description">
+                        <label>
+                            Description
+                            <Field
+                                as="textarea"
+                                name="description"
+                                disabled={isSubmitting}
+                            />
+                        </label>
+                    </div>
+                    <div className="status">
+                        <label>
+                            <Field
+                                type="radio"
+                                name="status"
+                                value="pending"
+                                disabled={isSubmitting}
+                            />
+                            {getTaskEmoji('pending')} Pending
+                        </label>
+                        <label>
+                            <Field
+                                type="radio"
+                                name="status"
+                                value="in_progress"
+                                disabled={isSubmitting}
+                            />
+                            {getTaskEmoji('in_progress')} In Progress
+                        </label>
+                        <label>
+                            <Field
+                                type="radio"
+                                name="status"
+                                value="completed"
+                                disabled={isSubmitting}
+                            />
+                            {getTaskEmoji('completed')} Completed
+                        </label>
+                    </div>
+                    <div className="actions">
+                        <button type="submit" disabled={isSubmitting}>
+                            {task == null ? 'Add' : 'Save'}
+                        </button>
+                        {children}
+                    </div>
+                    <div className="errors">
+                        <ErrorMessage name="title" component="div" />
+                        <ErrorMessage name="description" component="div" />
+                    </div>
                 </Form>
             )}
         </Formik>

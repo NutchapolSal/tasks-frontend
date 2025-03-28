@@ -4,8 +4,8 @@
     font-weight: 400;
 
     color-scheme: light dark;
-    color: rgba(255, 255, 255, 0.87);
-    background-color: #242424;
+    color: light-dark(#213547, rgba(255, 255, 255, 0.87));
+    background-color: light-dark(#ffffff, #242424);
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -19,7 +19,7 @@ a {
     text-decoration: inherit;
 }
 a:hover {
-    color: #535bf2;
+    color: light-dark(#747bff, #535bf2);
 }
 
 button {
@@ -29,9 +29,17 @@ button {
     font-size: 1em;
     font-weight: 500;
     font-family: inherit;
-    background-color: #1a1a1a;
+    background-color: light-dark(#f9f9f9, #1a1a1a);
+    border-color: light-dark(#eaeaea, #333333);
     cursor: pointer;
     transition: border-color 0.25s;
+}
+button.danger {
+    border-color: light-dark(#ffc2c2, #663333);
+
+    &:hover {
+        border-color: light-dark(#ff4040, #ff5252);
+    }
 }
 button:hover {
     border-color: #646cff;
@@ -39,19 +47,6 @@ button:hover {
 button:focus,
 button:focus-visible {
     outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-    :root {
-        color: #213547;
-        background-color: #ffffff;
-    }
-    a:hover {
-        color: #747bff;
-    }
-    button {
-        background-color: #f9f9f9;
-    }
 }
 
 form.auth {
@@ -70,4 +65,86 @@ div.auth {
     gap: 1em;
     align-items: center;
     flex-wrap: wrap;
+    margin: 0.5em 0;
+}
+
+ul.tasksList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 1em 0.5em;
+
+    display: grid;
+    grid-template-columns: min-content auto min-content min-content;
+
+    li.taskItem {
+        display: grid;
+        align-items: start;
+        grid-template-columns: subgrid;
+        grid-column: 1 / 5;
+
+        background-color: light-dark(#f9f9f9, #1a1a1a);
+        border-radius: 8px;
+        &:has(div.content.expandable:hover) {
+            background-color: light-dark(#f0f0f0, #2a2a2a);
+        }
+
+        div.content {
+            &.expandable:hover p.description:not(.expanded) {
+                mask-image: linear-gradient(
+                    to bottom,
+                    rgba(0, 0, 0, 1) 75%,
+                    rgba(0, 0, 0, 0) 100%
+                );
+            }
+
+            p.title {
+                margin: 0.3em 0;
+            }
+
+            p.description {
+                font-size: 0.8em;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                margin: 0.5em 0;
+
+                color: light-dark(#54606c, rgba(255, 255, 255, 0.686));
+
+                &:not(.expanded) {
+                    max-height: 1.75lh;
+
+                    mask-image: linear-gradient(
+                        to bottom,
+                        rgba(0, 0, 0, 1) 50%,
+                        rgba(0, 0, 0, 0) 100%
+                    );
+                }
+            }
+        }
+
+        form.taskForm {
+            margin: 0.5em 0.75em;
+        }
+    }
+
+    button {
+        padding: 0.3em 0.6em;
+    }
+}
+form.taskForm {
+    grid-column: 1 / 5;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+
+    label:has(input[type='text']),
+    label:has(textarea) {
+        display: flex;
+        flex-direction: column;
+    }
+    div.actions {
+        display: flex;
+        gap: 0.5em;
+    }
 }

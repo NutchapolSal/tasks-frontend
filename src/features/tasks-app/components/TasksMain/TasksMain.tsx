@@ -49,7 +49,7 @@ const TasksMain: FC = () => {
     }
 
     return (
-        <ul>
+        <ul className="tasksList">
             {tasks.map((task) => (
                 <TaskItem
                     key={task.taskId}
