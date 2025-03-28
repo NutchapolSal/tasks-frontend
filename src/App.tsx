@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { jwtDecode } from 'jwt-decode'
-import AuthForm from './features/auth-app/components/AuthForm/AuthForm'
+import AuthMain from './features/auth-app/components/AuthMain/AuthMain'
 import {
     AuthContext,
     AuthContextValue,
@@ -37,7 +37,7 @@ function App() {
             <h1>Tasks App</h1>
             <div className="card">
                 <AuthContext.Provider value={authContext}>
-                    <AuthForm outputHandler={setAuthContext} />
+                    <AuthMain outputHandler={setAuthContext} />
                     <TasksMain />
                 </AuthContext.Provider>
             </div>

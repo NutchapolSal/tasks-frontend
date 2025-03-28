@@ -10,7 +10,7 @@ export interface AuthFormProps {
     outputHandler: (accessToken: AuthContextValue | null) => void
 }
 
-const AuthForm: FC<AuthFormProps> = ({ outputHandler }) => {
+const AuthMain: FC<AuthFormProps> = ({ outputHandler }) => {
     const authValue = useContext(AuthContext)
     const [authError, setAuthError] = useState<string | null>(null)
 
@@ -168,4 +168,4 @@ const AuthForm: FC<AuthFormProps> = ({ outputHandler }) => {
     )
 }
 
-export default AuthForm
+export default AuthMain
