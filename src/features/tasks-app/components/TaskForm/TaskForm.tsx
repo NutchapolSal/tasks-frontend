@@ -33,7 +33,7 @@ const TaskForm: FC<TaskProps> = ({ task, handleSubmit, children }) => {
                     .mixed<Task['status']>()
                     .oneOf(['pending', 'in_progress', 'completed']),
             })}
-            onSubmit={async (values, { setSubmitting }) => {
+            onSubmit={async (values, { setSubmitting, resetForm }) => {
                 const newTask: CreateTaskDto = values
 
                 let res
@@ -57,6 +57,7 @@ const TaskForm: FC<TaskProps> = ({ task, handleSubmit, children }) => {
 
                 handleSubmit(res.data)
                 setSubmitting(false)
+                resetForm()
             }}
         >
             {({ isSubmitting }) => (
