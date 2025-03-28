@@ -33,6 +33,8 @@ declare namespace Components {
             description: string;
             status: "pending" | "in_progress" | "completed";
             userId: string;
+            createdAt: string; // date-time
+            updatedAt: string; // date-time
         }
         export interface UpdateTaskDto {
             /**
