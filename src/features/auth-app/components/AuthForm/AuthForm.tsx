@@ -85,8 +85,8 @@ const AuthForm: FC<AuthFormProps> = ({ outputHandler }) => {
 
     if (authValue != null) {
         return (
-            <>
-                <p>Logged in as {authValue.jwtPayload.email ?? ''}</p>
+            <div className="auth">
+                <span>Logged in as {authValue.jwtPayload.email ?? ''}</span>
                 <button
                     onClick={() => {
                         outputHandler(null)
@@ -94,7 +94,7 @@ const AuthForm: FC<AuthFormProps> = ({ outputHandler }) => {
                 >
                     Log Out
                 </button>
-            </>
+            </div>
         )
     }
 
@@ -102,8 +102,8 @@ const AuthForm: FC<AuthFormProps> = ({ outputHandler }) => {
         <Formik
             initialValues={{ email: '', password: '' }}
             validationSchema={yup.object({
-                email: yup.string().email().required('Email is required'),
-                password: yup.string().required('Password is required'),
+                email: yup.string().email().required(),
+                password: yup.string().required(),
             })}
             onSubmit={async (values, { setSubmitting }) => {
                 setAuthError(null)
@@ -135,13 +135,14 @@ const AuthForm: FC<AuthFormProps> = ({ outputHandler }) => {
             }}
         >
             {({ isSubmitting }) => (
-                <Form>
+                <Form className="auth">
                     <label>
                         Email
                         <Field
                             type="email"
                             name="email"
                             disabled={isSubmitting}
+                            required
                         />
                     </label>
                     <label>
@@ -150,14 +151,17 @@ const AuthForm: FC<AuthFormProps> = ({ outputHandler }) => {
                             type="password"
                             name="password"
                             disabled={isSubmitting}
+                            required
                         />
                     </label>
                     <button type="submit" disabled={isSubmitting}>
                         Log In
                     </button>
-                    <ErrorMessage name="email" component="div" />
-                    <ErrorMessage name="password" component="div" />
-                    {authError == null ? null : <div>{authError}</div>}
+                    <div className="errors">
+                        {authError == null ? null : <div>{authError}</div>}
+                        <ErrorMessage name="email" component="div" />
+                        <ErrorMessage name="password" component="div" />
+                    </div>
                 </Form>
             )}
         </Formik>

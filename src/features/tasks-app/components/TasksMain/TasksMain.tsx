@@ -42,7 +42,7 @@ const TasksMain: FC = () => {
     }
 
     if (authValue == null) {
-        return <div>Please Log in</div>
+        return
     }
 
     return (

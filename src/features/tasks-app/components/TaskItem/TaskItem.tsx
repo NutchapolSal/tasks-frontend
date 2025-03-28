@@ -67,8 +67,11 @@ const TaskItem: FC<TaskProps> = ({ task, handleEdit, handleDelete }) => {
                         setEditing(false)
                         handleEdit(task)
                     }}
-                />
-                <button onClick={() => setEditing(false)}>🔙</button>
+                >
+                    <button type="button" onClick={() => setEditing(false)}>
+                        Cancel
+                    </button>
+                </TaskForm>
             </>
         )
     }
@@ -88,7 +91,7 @@ const TaskItem: FC<TaskProps> = ({ task, handleEdit, handleDelete }) => {
     }
 
     return (
-        <li>
+        <li className="taskItem">
             <button onClick={handleStatusClick}>
                 {getTaskEmoji(task.status)}
             </button>

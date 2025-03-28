@@ -8,9 +8,10 @@ import client from '../../../../utils/axios'
 export interface TaskProps {
     task?: Task | null
     handleSubmit: (task: Task) => void
+    children?: React.ReactNode
 }
 
-const TaskForm: FC<TaskProps> = ({ task, handleSubmit }) => {
+const TaskForm: FC<TaskProps> = ({ task, handleSubmit, children }) => {
     const authValue = useContext(AuthContext)
 
     if (authValue == null) {
@@ -58,7 +59,7 @@ const TaskForm: FC<TaskProps> = ({ task, handleSubmit }) => {
             }}
         >
             {({ isSubmitting }) => (
-                <Form>
+                <Form className="taskForm">
                     <label>
                         Title
                         <Field
@@ -106,6 +107,7 @@ const TaskForm: FC<TaskProps> = ({ task, handleSubmit }) => {
                     <button type="submit" disabled={isSubmitting}>
                         {task == null ? 'Add' : 'Save'}
                     </button>
+                    {children}
                     <ErrorMessage name="title" component="div" />
                     <ErrorMessage name="description" component="div" />
                 </Form>

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import './App.css'
 import { jwtDecode } from 'jwt-decode'
 import AuthForm from './features/auth-app/components/AuthForm/AuthForm'
 import {
