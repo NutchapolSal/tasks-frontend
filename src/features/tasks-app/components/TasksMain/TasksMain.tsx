@@ -23,12 +23,15 @@ const TasksMain: FC = () => {
                 },
             })
             .then((response) => {
+                response.data.sort((a, b) =>
+                    b.createdAt.localeCompare(a.createdAt)
+                )
                 setTasks(response.data)
             })
     }, [authValue])
 
     const handleNew = (task: Task) => {
-        setTasks([...tasks, task])
+        setTasks([task, ...tasks])
     }
 
     const handleEdit = (task: Task) => {
