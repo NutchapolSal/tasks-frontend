@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useState } from 'react'
+import { FC, useContext, useEffect, useRef, useState } from 'react'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import * as yup from 'yup'
 import client from '../../../../utils/axios'
@@ -13,6 +13,8 @@ export interface AuthFormProps {
 const AuthMain: FC<AuthFormProps> = ({ outputHandler }) => {
     const authValue = useContext(AuthContext)
     const [authError, setAuthError] = useState<string | null>(null)
+    const [dialogOpen, setDialogOpen] = useState(false)
+    const dialogRef = useRef<HTMLDialogElement>(null)
 
     const refreshAccessToken = async (
         accessToken: string,
@@ -83,6 +85,17 @@ const AuthMain: FC<AuthFormProps> = ({ outputHandler }) => {
         return () => clearTimeout(refreshIntervalId)
     }, [authValue, outputHandler])
 
+    useEffect(() => {
+        if (dialogRef.current == null) {
+            return
+        }
+        if (dialogRef.current.open && !dialogOpen) {
+            dialogRef.current.close()
+        } else if (!dialogRef.current.open && dialogOpen) {
+            dialogRef.current.showModal()
+        }
+    }, [dialogOpen])
+
     if (authValue != null) {
         return (
             <div className="auth">
@@ -94,6 +107,19 @@ const AuthMain: FC<AuthFormProps> = ({ outputHandler }) => {
                 >
                     Log Out
                 </button>
+                <button
+                    onClick={() => {
+                        setDialogOpen(!dialogOpen)
+                    }}
+                >
+                    ≡
+                </button>
+                <dialog ref={dialogRef} onClose={() => setDialogOpen(false)}>
+                    uh oh
+                    <form method="dialog">
+                        <button>Close</button>
+                    </form>
+                </dialog>
             </div>
         )
     }
