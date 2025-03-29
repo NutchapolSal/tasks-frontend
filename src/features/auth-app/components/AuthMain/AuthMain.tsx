@@ -1,24 +1,24 @@
-import { FC, useContext, useEffect, useRef, useState } from 'react'
-import { Formik, Form, Field, ErrorMessage } from 'formik'
-import * as yup from 'yup'
+import { FC, useContext, useEffect, useState } from 'react'
 import client from '../../../../utils/axios'
 import { isAxiosError } from 'axios'
 import { AuthContext, AuthContextValue, isMyJwtPayload } from '../AuthContext'
 import { jwtDecode } from 'jwt-decode'
+import AuthMoreDialog from '../AuthMoreDialog'
+import AuthForm from '../AuthForm'
 
-export interface AuthFormProps {
-    outputHandler: (accessToken: AuthContextValue | null) => void
+export interface AuthMainProps {
+    handleAuthChange: (authValue: AuthContextValue | null) => void
 }
 
-const AuthMain: FC<AuthFormProps> = ({ outputHandler }) => {
+const AuthMain: FC<AuthMainProps> = ({ handleAuthChange }) => {
     const authValue = useContext(AuthContext)
     const [authError, setAuthError] = useState<string | null>(null)
     const [dialogOpen, setDialogOpen] = useState(false)
-    const dialogRef = useRef<HTMLDialogElement>(null)
+    const [registerOpen, setRegisterOpen] = useState(false)
 
     const refreshAccessToken = async (
         accessToken: string,
-        outputHandler: AuthFormProps['outputHandler']
+        outputHandler: AuthMainProps['handleAuthChange']
     ) => {
         try {
             const response = await client.AuthController_getNewAccessToken(
@@ -51,12 +51,17 @@ const AuthMain: FC<AuthFormProps> = ({ outputHandler }) => {
         }
     }
 
+    const handleRegisterSwitch = () => {
+        setRegisterOpen(!registerOpen)
+        setAuthError(null)
+    }
+
     // refresh on first render
     useEffect(() => {
         if (authValue == null) {
             return
         }
-        refreshAccessToken(authValue.accessToken, outputHandler)
+        refreshAccessToken(authValue.accessToken, handleAuthChange)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -73,28 +78,17 @@ const AuthMain: FC<AuthFormProps> = ({ outputHandler }) => {
 
         if (msToExpiry < 0) {
             setAuthError('Session has expired, Please log in again')
-            outputHandler(null)
+            handleAuthChange(null)
             return
         }
 
         const refreshIntervalId = setTimeout(
-            () => refreshAccessToken(authValue.accessToken, outputHandler),
+            () => refreshAccessToken(authValue.accessToken, handleAuthChange),
             msToExpiry * 0.9
         )
 
         return () => clearTimeout(refreshIntervalId)
-    }, [authValue, outputHandler])
-
-    useEffect(() => {
-        if (dialogRef.current == null) {
-            return
-        }
-        if (dialogRef.current.open && !dialogOpen) {
-            dialogRef.current.close()
-        } else if (!dialogRef.current.open && dialogOpen) {
-            dialogRef.current.showModal()
-        }
-    }, [dialogOpen])
+    }, [authValue, handleAuthChange])
 
     if (authValue != null) {
         return (
@@ -102,7 +96,7 @@ const AuthMain: FC<AuthFormProps> = ({ outputHandler }) => {
                 <span>Logged in as {authValue.jwtPayload.email ?? ''}</span>
                 <button
                     onClick={() => {
-                        outputHandler(null)
+                        handleAuthChange(null)
                     }}
                 >
                     Log Out
@@ -114,83 +108,27 @@ const AuthMain: FC<AuthFormProps> = ({ outputHandler }) => {
                 >
                     ≡
                 </button>
-                <dialog ref={dialogRef} onClose={() => setDialogOpen(false)}>
-                    uh oh
-                    <form method="dialog">
-                        <button>Close</button>
-                    </form>
-                </dialog>
+                <AuthMoreDialog
+                    dialogOpen={dialogOpen}
+                    setDialogOpen={setDialogOpen}
+                    handleAuthChange={handleAuthChange}
+                />
             </div>
         )
     }
 
     return (
-        <Formik
-            initialValues={{ email: '', password: '' }}
-            validationSchema={yup.object({
-                email: yup.string().email().required(),
-                password: yup.string().required(),
-            })}
-            onSubmit={async (values, { setSubmitting }) => {
-                setAuthError(null)
-                try {
-                    const response = await client.AuthController_signIn(null, {
-                        email: values.email,
-                        rawPassword: values.password,
-                    })
-                    const jwtPayload = jwtDecode(response.data.accessToken)
-                    if (!isMyJwtPayload(jwtPayload)) {
-                        throw new Error('Invalid JWT payload')
-                    }
-                    outputHandler({
-                        accessToken: response.data.accessToken,
-                        jwtPayload,
-                    })
-                } catch (error) {
-                    if (isAxiosError(error) && error.status === 401) {
-                        setAuthError('Invalid email or password')
-                        outputHandler(null)
-                    } else if (error instanceof Error || isAxiosError(error)) {
-                        setAuthError(error.message)
-                        outputHandler(null)
-                    } else {
-                        throw error
-                    }
-                }
-                setSubmitting(false)
-            }}
-        >
-            {({ isSubmitting }) => (
-                <Form className="auth">
-                    <label>
-                        Email
-                        <Field
-                            type="email"
-                            name="email"
-                            disabled={isSubmitting}
-                            required
-                        />
-                    </label>
-                    <label>
-                        Password
-                        <Field
-                            type="password"
-                            name="password"
-                            disabled={isSubmitting}
-                            required
-                        />
-                    </label>
-                    <button type="submit" disabled={isSubmitting}>
-                        Log In
-                    </button>
-                    <div className="errors">
-                        {authError == null ? null : <div>{authError}</div>}
-                        <ErrorMessage name="email" component="div" />
-                        <ErrorMessage name="password" component="div" />
-                    </div>
-                </Form>
-            )}
-        </Formik>
+        <>
+            <AuthForm
+                handleAuthChange={handleAuthChange}
+                setAuthError={setAuthError}
+                authError={authError}
+                isRegistration={registerOpen}
+            />
+            <button onClick={handleRegisterSwitch}>
+                I {registerOpen ? '' : "don't"} have an account
+            </button>
+        </>
     )
 }
 

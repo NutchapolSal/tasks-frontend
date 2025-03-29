@@ -37,7 +37,7 @@ function App() {
             <h1>Tasks App</h1>
             <div className="card">
                 <AuthContext.Provider value={authContext}>
-                    <AuthMain outputHandler={setAuthContext} />
+                    <AuthMain handleAuthChange={setAuthContext} />
                     <TasksMain />
                 </AuthContext.Provider>
             </div>

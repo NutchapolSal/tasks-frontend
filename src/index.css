@@ -54,6 +54,8 @@ form.auth {
     display: flex;
     flex-direction: column;
     gap: 1em;
+    margin: 0.5em 0;
+
     label {
         display: flex;
         flex-direction: column;
@@ -146,5 +148,22 @@ form.taskForm {
     div.actions {
         display: flex;
         gap: 0.5em;
+    }
+}
+
+dialog.authMore {
+    border-radius: 8px;
+    border-color: light-dark(#54606c, rgba(255, 255, 255, 0.686));
+
+    form {
+        display: flex;
+        gap: 0.5em;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    > form,
+    > button {
+        margin: 0.5em 0;
     }
 }
