@@ -67,7 +67,7 @@ const AuthMain: FC<AuthMainProps> = ({ handleAuthChange }) => {
 
     // then refresh on almost expiry
     useEffect(() => {
-        if (authValue == null || authValue.jwtPayload?.exp == null) {
+        if (authValue == null) {
             return
         }
 
@@ -93,7 +93,7 @@ const AuthMain: FC<AuthMainProps> = ({ handleAuthChange }) => {
     if (authValue != null) {
         return (
             <div className="auth">
-                <span>Logged in as {authValue.jwtPayload.email ?? ''}</span>
+                <span>Logged in as {authValue.jwtPayload.email}</span>
                 <button
                     onClick={() => {
                         handleAuthChange(null)
