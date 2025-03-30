@@ -1,89 +1,135 @@
-import { fireEvent, render, screen } from '@testing-library/react'
-import { describe, it, expect, vi } from 'vitest'
+import { act, render, screen } from '@testing-library/react'
+import { describe, it, expect } from 'vitest'
 
 import TasksMain from './TasksMain'
+import { AuthContext } from '../../../auth-app/components/AuthContext/AuthContext'
+
+import '../../../../mock/tasks-app/mock-tasks'
+import { mockAuthContextValue } from '../../../../utils/mock-auth-values'
+import userEvent from '@testing-library/user-event'
+import { newTask, tasks } from '../../../../utils/mock-task-values'
+import { getTaskEmoji } from '../../common'
+import { sleep } from '../../../../utils/sleep'
 
 describe('TasksMain', () => {
-    const handleOutput = vi.fn()
+    it('should not load when no auth context', async () => {
+        render(<TasksMain />)
 
-    it('should load and display', () => {
-        render(<TasksMain outputHandler={handleOutput} />)
-
-        const button = screen.getByRole('button', { name: 'calculate button' })
-        const inputs = screen.getAllByRole('textbox')
-        const select = screen.getByRole('combobox')
-
-        // button.click()
-
-        expect(button).toBeDefined()
-        expect(inputs).toHaveLength(2)
-        expect(select).toBeDefined()
+        expect(screen.queryByRole('button', { name: 'Add' })).toBeNull()
+        expect(screen.queryByRole('textbox', { name: 'Title' })).toBeNull()
+        expect(
+            screen.queryByRole('textbox', { name: 'Description' })
+        ).toBeNull()
+        expect(screen.queryByRole('list')).toBeNull()
     })
 
-    it('should run callback on submit', () => {
-        render(<TasksMain outputHandler={handleOutput} />)
+    it('should load and display', async () => {
+        render(
+            <AuthContext.Provider value={mockAuthContextValue}>
+                <TasksMain />
+            </AuthContext.Provider>
+        )
+        await act(async () => {
+            await sleep(0)
+        })
 
-        const button = screen.getByRole('button', { name: 'calculate button' })
-        button.click()
+        screen.getByRole('list')
 
-        expect(handleOutput).toHaveBeenCalled()
+        screen.getByRole('button', { name: 'Add' })
+        screen.getByRole('textbox', { name: 'Title' })
+        screen.getByRole('textbox', {
+            name: 'Description',
+        })
+        const listItems = screen.getAllByRole('listitem')
+
+        expect(listItems).toHaveLength(tasks.length)
     })
+    it('should successfully add a task', async () => {
+        render(
+            <AuthContext.Provider value={mockAuthContextValue}>
+                <TasksMain />
+            </AuthContext.Provider>
+        )
+        const user = userEvent.setup()
 
-    it('should be able to input number and select operator', () => {
-        render(<TasksMain outputHandler={handleOutput} />)
-
-        const input1 = screen.getByRole<HTMLInputElement>('textbox', {
-            name: 'input1',
+        const titleField = screen.getByRole('textbox', {
+            name: 'Title',
         })
-        const input2 = screen.getByRole<HTMLInputElement>('textbox', {
-            name: 'input2',
+        const descriptionField = screen.getByRole('textbox', {
+            name: 'Description',
         })
-        const select = screen.getByRole<HTMLSelectElement>('combobox')
+        const statusRadios = screen.getAllByRole<HTMLInputElement>('radio')
+        const button = screen.getByRole('button', { name: 'Add' })
 
-        expect(input1).toBeDefined()
-        expect(input2).toBeDefined()
-        expect(select).toBeDefined()
+        await act(async () => {
+            await user.clear(titleField)
+            await user.clear(descriptionField)
+            await user.type(titleField, newTask.title)
+            for (const radio of statusRadios) {
+                if (radio.value === newTask.status) {
+                    await user.click(radio)
+                    break
+                }
+            }
+            await user.click(button)
+        })
 
-        fireEvent.change(input1, { target: { value: '98' } })
-        fireEvent.change(input2, { target: { value: '2' } })
-        fireEvent.change(select, { target: { value: '-' } })
-
-        expect(input1.value).toBe('98')
-        expect(input2.value).toBe('2')
-        expect(select.value).toBe('-')
+        screen.getByText('New Task')
     })
-
-    it('should run callback with correct values', () => {
-        render(<TasksMain outputHandler={handleOutput} />)
-
-        const button = screen.getByRole('button', { name: 'calculate button' })
-        const input1 = screen.getByRole<HTMLInputElement>('textbox', {
-            name: 'input1',
+    it('should successfully edit a task', async () => {
+        render(
+            <AuthContext.Provider value={mockAuthContextValue}>
+                <TasksMain />
+            </AuthContext.Provider>
+        )
+        await act(async () => {
+            await sleep(0)
         })
-        const input2 = screen.getByRole<HTMLInputElement>('textbox', {
-            name: 'input2',
+        const user = userEvent.setup()
+
+        const status1TaskButton = screen.getByRole('button', {
+            name: getTaskEmoji('completed'),
         })
-        const select = screen.getByRole<HTMLSelectElement>('combobox')
-
-        fireEvent.change(input1, { target: { value: '98' } })
-        fireEvent.change(input2, { target: { value: '2' } })
-
-        for (const [operator, value] of [
-            ['/', 49],
-            ['+', 100],
-            ['-', 96],
-            ['*', 196],
-        ] as const) {
-            fireEvent.change(select, { target: { value: operator } })
-            button.click()
-            expect(handleOutput).toHaveBeenCalledWith({
-                id: expect.any(String),
-                removed: false,
-                count: 98,
-                operator: operator,
-                count2: 2,
-                output: value,
+        expect(
+            screen.queryAllByRole('button', {
+                name: getTaskEmoji('pending'),
             })
-        }
+        ).toHaveLength(1)
+
+        await act(async () => {
+            await user.click(status1TaskButton)
+        })
+
+        expect(
+            screen.queryAllByRole('button', {
+                name: getTaskEmoji('pending'),
+            })
+        ).toHaveLength(2)
+    })
+    it('should successfully delete a task', async () => {
+        render(
+            <AuthContext.Provider value={mockAuthContextValue}>
+                <TasksMain />
+            </AuthContext.Provider>
+        )
+        await act(async () => {
+            await sleep(0)
+        })
+        const user = userEvent.setup()
+
+        const deleteButtons = screen.getAllByRole('button', {
+            name: '🗑️',
+        })
+        expect(deleteButtons).toHaveLength(tasks.length)
+
+        await act(async () => user.click(deleteButtons[0]))
+        const confirmButton = screen.getByRole('button', {
+            name: '💥',
+        })
+        await act(async () => user.click(confirmButton))
+
+        expect(screen.queryAllByRole('button', { name: '🗑️' })).toHaveLength(
+            tasks.length - 1
+        )
     })
 })

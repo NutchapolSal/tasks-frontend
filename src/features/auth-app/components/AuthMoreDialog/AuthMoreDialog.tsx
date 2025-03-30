@@ -124,6 +124,7 @@ const AuthMoreDialog: FC<AuthMoreDialogProps> = ({
                             type="email"
                             placeholder="Email"
                             disabled={isSubmitting}
+                            aria-label="Update Email"
                         />
                         <button
                             type="submit"

@@ -2,7 +2,7 @@ import { FC, useContext, useState } from 'react'
 import { Task } from '../../../../types/backend-openapi'
 import TaskForm from '../TaskForm'
 import client from '../../../../utils/axios'
-import { AuthContext } from '../../../auth-app/components/AuthContext'
+import { AuthContext } from '../../../auth-app/components/AuthContext/AuthContext'
 import { getTaskEmoji, getTaskStatus } from '../../common'
 
 export interface TaskProps {
@@ -37,7 +37,7 @@ const TaskItem: FC<TaskProps> = ({ task, handleEdit, handleDelete }) => {
                 break
         }
 
-        await client.TasksController_patchTask(
+        const res = await client.TasksController_patchTask(
             { id: task.taskId },
             { status: newStatus },
             {
@@ -47,7 +47,7 @@ const TaskItem: FC<TaskProps> = ({ task, handleEdit, handleDelete }) => {
             }
         )
 
-        handleEdit({ ...task, status: newStatus })
+        handleEdit(res.data)
     }
 
     const handleExpandClick = () => {

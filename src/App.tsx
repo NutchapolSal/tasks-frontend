@@ -5,7 +5,7 @@ import {
     AuthContext,
     AuthContextValue,
     isMyJwtPayload,
-} from './features/auth-app/components/AuthContext'
+} from './features/auth-app/components/AuthContext/AuthContext'
 import TasksMain from './features/tasks-app/components/TasksMain/TasksMain'
 
 function App() {

@@ -18,7 +18,7 @@ const AuthMain: FC<AuthMainProps> = ({ handleAuthChange }) => {
 
     const refreshAccessToken = async (
         accessToken: string,
-        outputHandler: AuthMainProps['handleAuthChange']
+        handleAuthChange: AuthMainProps['handleAuthChange']
     ) => {
         try {
             const response = await client.AuthController_getNewAccessToken(
@@ -34,17 +34,17 @@ const AuthMain: FC<AuthMainProps> = ({ handleAuthChange }) => {
             if (!isMyJwtPayload(jwtPayload)) {
                 throw new Error('Invalid JWT payload')
             }
-            outputHandler({
+            handleAuthChange({
                 accessToken: response.data.accessToken,
                 jwtPayload,
             })
         } catch (error) {
             if (isAxiosError(error) && error.status === 401) {
                 setAuthError('Session has expired, Please log in again')
-                outputHandler(null)
+                handleAuthChange(null)
             } else if (error instanceof Error || isAxiosError(error)) {
                 setAuthError(error.message)
-                outputHandler(null)
+                handleAuthChange(null)
             } else {
                 throw error
             }
@@ -71,12 +71,12 @@ const AuthMain: FC<AuthMainProps> = ({ handleAuthChange }) => {
             return
         }
 
-        const msToExpiry = Math.max(
+        const secsToExpiry = Math.max(
             0,
-            authValue.jwtPayload.exp * 1000 - Date.now()
+            authValue.jwtPayload.exp - Date.now() / 1000
         )
 
-        if (msToExpiry < 0) {
+        if (secsToExpiry == 0) {
             setAuthError('Session has expired, Please log in again')
             handleAuthChange(null)
             return
@@ -84,7 +84,7 @@ const AuthMain: FC<AuthMainProps> = ({ handleAuthChange }) => {
 
         const refreshIntervalId = setTimeout(
             () => refreshAccessToken(authValue.accessToken, handleAuthChange),
-            msToExpiry * 0.9
+            Math.min(secsToExpiry * 1000 * 0.9, 1000 * 60)
         )
 
         return () => clearTimeout(refreshIntervalId)
@@ -126,7 +126,7 @@ const AuthMain: FC<AuthMainProps> = ({ handleAuthChange }) => {
                 isRegistration={registerOpen}
             />
             <button onClick={handleRegisterSwitch}>
-                I {registerOpen ? '' : "don't"} have an account
+                I {registerOpen ? 'already' : "don't"} have an account
             </button>
         </>
     )

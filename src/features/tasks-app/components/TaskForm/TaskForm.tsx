@@ -2,7 +2,7 @@ import { FC, useContext } from 'react'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import * as yup from 'yup'
 import { CreateTaskDto, Task } from '../../../../types/backend-openapi'
-import { AuthContext } from '../../../auth-app/components/AuthContext'
+import { AuthContext } from '../../../auth-app/components/AuthContext/AuthContext'
 import client from '../../../../utils/axios'
 import { getTaskEmoji } from '../../common'
 

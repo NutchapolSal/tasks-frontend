@@ -1,5 +1,5 @@
 import { FC, useContext, useEffect, useState } from 'react'
-import { AuthContext } from '../../../auth-app/components/AuthContext'
+import { AuthContext } from '../../../auth-app/components/AuthContext/AuthContext'
 import { Task } from '../../../../types/backend-openapi'
 import client from '../../../../utils/axios'
 import TaskForm from '../TaskForm'
