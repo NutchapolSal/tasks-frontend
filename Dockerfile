@@ -7,7 +7,7 @@ WORKDIR /app
 COPY --link package.json package-lock.json ./
 RUN npm ci
 COPY --link src ./src
-COPY --link public ./public
+# COPY --link public ./public
 COPY --link index.html eslint.config.js tsconfig.app.json tsconfig.json tsconfig.node.json vite.config.ts vitest.config.ts ./
 RUN <<EOS
     npm run build
