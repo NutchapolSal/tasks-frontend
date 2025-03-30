@@ -1,7 +1,7 @@
 import OpenAPIClientAxios from 'openapi-client-axios'
 import { Client } from '../types/backend-openapi'
 
-const API_URL = import.meta.env.VITE_END_POINT
+const API_URL = import.meta.env.VITE_ENDPOINT
 
 const api = new OpenAPIClientAxios({
     definition: `${API_URL}/api-json`,
